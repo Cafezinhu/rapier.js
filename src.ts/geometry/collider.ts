@@ -155,9 +155,11 @@ export class Collider {
      * The world-space translation of this rigid-body.
      */
     public translation(): Vector {
-        return VectorOps.fromRaw(
+        const v = VectorOps.fromRaw(
             this.colliderSet.raw.coTranslation(this.handle),
         );
+        v.y *= -1;
+        return v;
     }
 
     /**
@@ -394,6 +396,8 @@ export class Collider {
         principalAngularInertia: Vector,
         angularInertiaLocalFrame: Rotation,
     ) {
+        centerOfMass.y *= -1;
+        principalAngularInertia.y *= -1;
         let rawCom = VectorOps.intoRaw(centerOfMass);
         let rawPrincipalInertia = VectorOps.intoRaw(principalAngularInertia);
         let rawInertiaFrame = RotationOps.intoRaw(angularInertiaLocalFrame);
@@ -425,6 +429,7 @@ export class Collider {
         centerOfMass: Vector,
         principalAngularInertia: number,
     ) {
+        centerOfMass.y *= -1;
         let rawCom = VectorOps.intoRaw(centerOfMass);
         this.colliderSet.raw.coSetMassProperties(
             this.handle,
@@ -443,7 +448,7 @@ export class Collider {
      */
     public setTranslation(tra: Vector) {
         // #if DIM2
-        this.colliderSet.raw.coSetTranslation(this.handle, tra.x, tra.y);
+        this.colliderSet.raw.coSetTranslation(this.handle, tra.x, -tra.y);
         // #endif
         // #if DIM3
         this.colliderSet.raw.coSetTranslation(this.handle, tra.x, tra.y, tra.z);
@@ -462,7 +467,7 @@ export class Collider {
         this.colliderSet.raw.coSetTranslationWrtParent(
             this.handle,
             tra.x,
-            tra.y,
+            -tra.y,
         );
         // #endif
         // #if DIM3
@@ -696,6 +701,7 @@ export class Collider {
      * @param point - The point to test.
      */
     public containsPoint(point: Vector): boolean {
+        point.y *= -1;
         let rawPoint = VectorOps.intoRaw(point);
         let result = this.colliderSet.raw.coContainsPoint(
             this.handle,
@@ -718,12 +724,15 @@ export class Collider {
      *   boundary).
      */
     public projectPoint(point: Vector, solid: boolean): PointProjection | null {
+        point.y *= -1;
         let rawPoint = VectorOps.intoRaw(point);
         let result = PointProjection.fromRaw(
             this.colliderSet.raw.coProjectPoint(this.handle, rawPoint, solid),
         );
 
         rawPoint.free();
+
+        result.point.y *= -1;
 
         return result;
     }
@@ -770,6 +779,9 @@ export class Collider {
         shape2Vel: Vector,
         maxToi: number,
     ): ShapeTOI | null {
+        collider1Vel.y *= -1;
+        shape2Pos.y *= -1;
+        shape2Vel.y *= -1;
         let rawCollider1Vel = VectorOps.intoRaw(collider1Vel);
         let rawShape2Pos = VectorOps.intoRaw(shape2Pos);
         let rawShape2Rot = RotationOps.intoRaw(shape2Rot);
@@ -795,6 +807,11 @@ export class Collider {
         rawShape2Vel.free();
         rawShape2.free();
 
+        result.normal1.y *= -1;
+        result.normal2.y *= -1;
+        result.witness1.y *= -1;
+        result.witness2.y *= -1;
+
         return result;
     }
 
@@ -813,6 +830,8 @@ export class Collider {
         collider2Vel: Vector,
         maxToi: number,
     ): ShapeColliderTOI | null {
+        collider1Vel.y *= -1;
+        collider2Vel.y *= -1;
         let rawCollider1Vel = VectorOps.intoRaw(collider1Vel);
         let rawCollider2Vel = VectorOps.intoRaw(collider2Vel);
 
@@ -830,6 +849,11 @@ export class Collider {
         rawCollider1Vel.free();
         rawCollider2Vel.free();
 
+        result.normal1.y *= -1;
+        result.normal2.y *= -1;
+        result.witness1.y *= -1;
+        result.witness2.y *= -1;
+
         return result;
     }
 
@@ -838,6 +862,7 @@ export class Collider {
         shapePos2: Vector,
         shapeRot2: Rotation,
     ): boolean {
+        shapePos2.y *= -1;
         let rawPos2 = VectorOps.intoRaw(shapePos2);
         let rawRot2 = RotationOps.intoRaw(shapeRot2);
         let rawShape2 = shape2.intoRaw();
@@ -871,6 +896,7 @@ export class Collider {
         shape2Rot: Rotation,
         prediction: number,
     ): ShapeContact | null {
+        shape2Pos.y *= -1;
         let rawPos2 = VectorOps.intoRaw(shape2Pos);
         let rawRot2 = RotationOps.intoRaw(shape2Rot);
         let rawShape2 = shape2.intoRaw();
@@ -888,6 +914,11 @@ export class Collider {
         rawPos2.free();
         rawRot2.free();
         rawShape2.free();
+
+        result.normal1.y *= -1;
+        result.normal2.y *= -1;
+        result.point1.y *= -1;
+        result.point2.y *= -1;
 
         return result;
     }
@@ -988,7 +1019,7 @@ export class ColliderDesc {
     shape: Shape;
     massPropsMode: MassPropsMode;
     mass: number;
-    centerOfMass: Vector;
+    private centerOfMass: Vector;
     // #if DIM2
     principalAngularInertia: number;
     rotationsEnabled: boolean;
@@ -1001,7 +1032,7 @@ export class ColliderDesc {
     friction: number;
     restitution: number;
     rotation: Rotation;
-    translation: Vector;
+    private translation: Vector;
     isSensor: boolean;
     collisionGroups: InteractionGroups;
     solverGroups: InteractionGroups;
@@ -1075,7 +1106,7 @@ export class ColliderDesc {
      * @param b - The second point of the segment.
      */
     public static segment(a: Vector, b: Vector): ColliderDesc {
-        const shape = new Segment(a, b);
+        const shape = new Segment({...a, y: -a.y}, {...b, y: -b.y});
         return new ColliderDesc(shape);
     }
 
@@ -1087,7 +1118,7 @@ export class ColliderDesc {
      * @param c - The third point of the triangle.
      */
     public static triangle(a: Vector, b: Vector, c: Vector): ColliderDesc {
-        const shape = new Triangle(a, b, c);
+        const shape = new Triangle({...a, y: -a.y}, {...b, y: -b.y}, {...c, y: -c.y});
         return new ColliderDesc(shape);
     }
 
@@ -1106,7 +1137,7 @@ export class ColliderDesc {
         c: Vector,
         borderRadius: number,
     ): ColliderDesc {
-        const shape = new RoundTriangle(a, b, c, borderRadius);
+        const shape = new RoundTriangle({...a, y: -a.y}, {...b, y: -b.y}, {...c, y: -c.y}, borderRadius);
         return new ColliderDesc(shape);
     }
 
@@ -1411,11 +1442,23 @@ export class ColliderDesc {
         if (typeof x != "number" || typeof y != "number")
             throw TypeError("The translation components must be numbers.");
 
-        this.translation = {x: x, y: y};
+        this.translation = {x: x, y: -y};
         return this;
     }
 
     // #endif
+
+    public getTranslation(){
+        return {x: this.translation.x, y: -this.translation.y};
+    }
+
+    public setCenterOfMass(x: number, y: number){
+        this.centerOfMass = {x, y: -y, z: 0};
+    }
+
+    public getCenterOfMass(){
+        return {x: this.centerOfMass.x, y: -this.centerOfMass.y};
+    }
 
     // #if DIM3
     /**
@@ -1508,7 +1551,7 @@ export class ColliderDesc {
     ): ColliderDesc {
         this.massPropsMode = MassPropsMode.MassProps;
         this.mass = mass;
-        VectorOps.copy(this.centerOfMass, centerOfMass);
+        VectorOps.copy(this.centerOfMass, {...centerOfMass, y: -centerOfMass.y});
         this.principalAngularInertia = principalAngularInertia;
         return this;
     }

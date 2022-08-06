@@ -137,7 +137,8 @@ export class ImpulseJoint {
      * local frame of the first rigid-body it is attached to.
      */
     public anchor1(): Vector {
-        return VectorOps.fromRaw(this.rawSet.jointAnchor1(this.handle));
+        const vector = VectorOps.fromRaw(this.rawSet.jointAnchor1(this.handle));
+        return {...vector, y: -vector.y};
     }
 
     /**
@@ -147,7 +148,8 @@ export class ImpulseJoint {
      * local frame of the second rigid-body it is attached to.
      */
     public anchor2(): Vector {
-        return VectorOps.fromRaw(this.rawSet.jointAnchor2(this.handle));
+        const vector = VectorOps.fromRaw(this.rawSet.jointAnchor2(this.handle));
+        return {...vector, y: -vector.y};
     }
 
     /**
@@ -157,7 +159,7 @@ export class ImpulseJoint {
      * local frame of the first rigid-body it is attached to.
      */
     public setAnchor1(newPos: Vector) {
-        const rawPoint = VectorOps.intoRaw(newPos);
+        const rawPoint = VectorOps.intoRaw({...newPos, y: -newPos.y});
         this.rawSet.jointSetAnchor1(this.handle, rawPoint);
         rawPoint.free();
     }
@@ -169,7 +171,7 @@ export class ImpulseJoint {
      * local frame of the second rigid-body it is attached to.
      */
     public setAnchor2(newPos: Vector) {
-        const rawPoint = VectorOps.intoRaw(newPos);
+        const rawPoint = VectorOps.intoRaw({...newPos, y: -newPos.y});
         this.rawSet.jointSetAnchor2(this.handle, rawPoint);
         rawPoint.free();
     }
@@ -347,8 +349,8 @@ export class JointData {
         frame2: Rotation,
     ): JointData {
         let res = new JointData();
-        res.anchor1 = anchor1;
-        res.anchor2 = anchor2;
+        res.anchor1 = {...anchor1, y: -anchor1.y};
+        res.anchor2 = {...anchor2, y: -anchor2.y};
         res.frame1 = frame1;
         res.frame2 = frame2;
         res.jointType = JointType.Fixed;
@@ -371,8 +373,8 @@ export class JointData {
      */
     public static revolute(anchor1: Vector, anchor2: Vector): JointData {
         let res = new JointData();
-        res.anchor1 = anchor1;
-        res.anchor2 = anchor2;
+        res.anchor1 = {...anchor1, y: -anchor1.y};
+        res.anchor2 = {...anchor2, y: -anchor2.y};
         res.jointType = JointType.Revolute;
         return res;
     }
@@ -395,9 +397,9 @@ export class JointData {
         axis: Vector,
     ): JointData {
         let res = new JointData();
-        res.anchor1 = anchor1;
-        res.anchor2 = anchor2;
-        res.axis = axis;
+        res.anchor1 = {...anchor1, y: -anchor1.y};
+        res.anchor2 = {...anchor2, y: -anchor2.y};
+        res.axis = {...axis, y: -axis.y};
         res.jointType = JointType.Prismatic;
         return res;
     }

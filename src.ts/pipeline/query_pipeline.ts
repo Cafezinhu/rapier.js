@@ -186,6 +186,7 @@ export class QueryPipeline {
 
         rawOrig.free();
         rawDir.free();
+        result.normal.y *= -1;
 
         return result;
     }
@@ -220,8 +221,10 @@ export class QueryPipeline {
         let rawOrig = VectorOps.intoRaw(ray.origin);
         let rawDir = VectorOps.intoRaw(ray.dir);
         let rawCallback = (rawInter: RawRayColliderIntersection) => {
+            const intersection = RayColliderIntersection.fromRaw(colliders, rawInter);
+            intersection.normal.y *= -1;
             return callback(
-                RayColliderIntersection.fromRaw(colliders, rawInter),
+                intersection,
             );
         };
 
@@ -266,6 +269,7 @@ export class QueryPipeline {
         filterExcludeRigidBody?: RigidBodyHandle,
         filterPredicate?: (collider: ColliderHandle) => boolean,
     ): ColliderHandle | null {
+        shapePos.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawShape = shape.intoRaw();
@@ -313,6 +317,7 @@ export class QueryPipeline {
         filterExcludeRigidBody?: RigidBodyHandle,
         filterPredicate?: (collider: ColliderHandle) => boolean,
     ): PointColliderProjection | null {
+        point.y *= -1;
         let rawPoint = VectorOps.intoRaw(point);
         let result = PointColliderProjection.fromRaw(
             colliders,
@@ -330,6 +335,7 @@ export class QueryPipeline {
         );
 
         rawPoint.free();
+        result.point.y *= -1;
 
         return result;
     }
@@ -352,6 +358,7 @@ export class QueryPipeline {
         filterExcludeRigidBody?: RigidBodyHandle,
         filterPredicate?: (collider: ColliderHandle) => boolean,
     ): PointColliderProjection | null {
+        point.y *= -1;
         let rawPoint = VectorOps.intoRaw(point);
         let result = PointColliderProjection.fromRaw(
             colliders,
@@ -368,6 +375,7 @@ export class QueryPipeline {
         );
 
         rawPoint.free();
+        result.point.y *= -1;
 
         return result;
     }
@@ -393,6 +401,7 @@ export class QueryPipeline {
         filterExcludeRigidBody?: RigidBodyHandle,
         filterPredicate?: (collider: ColliderHandle) => boolean,
     ) {
+        point.y *= -1;
         let rawPoint = VectorOps.intoRaw(point);
 
         this.raw.intersectionsWithPoint(
@@ -439,6 +448,8 @@ export class QueryPipeline {
         filterExcludeRigidBody?: RigidBodyHandle,
         filterPredicate?: (collider: ColliderHandle) => boolean,
     ): ShapeColliderTOI | null {
+        shapePos.y *= -1;
+        shapeVel.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawVel = VectorOps.intoRaw(shapeVel);
@@ -467,6 +478,11 @@ export class QueryPipeline {
         rawVel.free();
         rawShape.free();
 
+        result.normal1.y *= -1;
+        result.normal2.y *= -1;
+        result.witness1.y *= -1;
+        result.witness2.y *= -1;
+
         return result;
     }
 
@@ -494,6 +510,7 @@ export class QueryPipeline {
         filterExcludeRigidBody?: RigidBodyHandle,
         filterPredicate?: (collider: ColliderHandle) => boolean,
     ) {
+        shapePos.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawShape = shape.intoRaw();
@@ -530,6 +547,8 @@ export class QueryPipeline {
         aabbHalfExtents: Vector,
         callback: (handle: ColliderHandle) => boolean,
     ) {
+        aabbCenter.y *= -1;
+        aabbHalfExtents.y *= -1;
         let rawCenter = VectorOps.intoRaw(aabbCenter);
         let rawHalfExtents = VectorOps.intoRaw(aabbHalfExtents);
         this.raw.collidersWithAabbIntersectingAabb(

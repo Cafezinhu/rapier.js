@@ -28,8 +28,8 @@ export class Ray {
      * @param dir - The ray's direction of propagation.
      */
     constructor(origin: Vector, dir: Vector) {
-        this.origin = origin;
-        this.dir = dir;
+        this.origin = {...origin, y: -origin.y};;
+        this.dir = {...dir, y: -dir.y};;
     }
 
     public pointAt(t: number): Vector {

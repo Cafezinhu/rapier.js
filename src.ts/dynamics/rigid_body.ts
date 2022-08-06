@@ -247,7 +247,8 @@ export class RigidBody {
      */
     public translation(): Vector {
         let res = this.rawSet.rbTranslation(this.handle);
-        return VectorOps.fromRaw(res);
+        const vector = VectorOps.fromRaw(res);
+        return {...vector, y: -vector.y};
     }
 
     /**
@@ -267,7 +268,8 @@ export class RigidBody {
      */
     public nextTranslation(): Vector {
         let res = this.rawSet.rbNextTranslation(this.handle);
-        return VectorOps.fromRaw(res);
+        const vector = VectorOps.fromRaw(res);
+        return {...vector, y: -vector.y};
     }
 
     /**
@@ -291,7 +293,7 @@ export class RigidBody {
      */
     public setTranslation(tra: Vector, wakeUp: boolean) {
         // #if DIM2
-        this.rawSet.rbSetTranslation(this.handle, tra.x, tra.y, wakeUp);
+        this.rawSet.rbSetTranslation(this.handle, tra.x, -tra.y, wakeUp);
         // #endif
         // #if DIM3
         this.rawSet.rbSetTranslation(this.handle, tra.x, tra.y, tra.z, wakeUp);
@@ -305,7 +307,7 @@ export class RigidBody {
      * @param wakeUp - Forces the rigid-body to wake-up if it was asleep.
      */
     public setLinvel(vel: Vector, wakeUp: boolean) {
-        let rawVel = VectorOps.intoRaw(vel);
+        let rawVel = VectorOps.intoRaw({...vel, y: -vel.y});
         this.rawSet.rbSetLinvel(this.handle, rawVel, wakeUp);
         rawVel.free();
     }
@@ -358,7 +360,7 @@ export class RigidBody {
      * @param wakeUp - Forces the rigid-body to wake-up if it was asleep.
      */
     public setAngvel(vel: Vector, wakeUp: boolean) {
-        let rawVel = VectorOps.intoRaw(vel);
+        let rawVel = VectorOps.intoRaw({...vel, y: -vel.y});
         this.rawSet.rbSetAngvel(this.handle, rawVel, wakeUp);
         rawVel.free();
     }
@@ -402,7 +404,7 @@ export class RigidBody {
      */
     public setNextKinematicTranslation(t: Vector) {
         // #if DIM2
-        this.rawSet.rbSetNextKinematicTranslation(this.handle, t.x, t.y);
+        this.rawSet.rbSetNextKinematicTranslation(this.handle, t.x, -t.y);
         // #endif
         // #if DIM3
         this.rawSet.rbSetNextKinematicTranslation(this.handle, t.x, t.y, t.z);
@@ -455,7 +457,8 @@ export class RigidBody {
      * The linear velocity of this rigid-body.
      */
     public linvel(): Vector {
-        return VectorOps.fromRaw(this.rawSet.rbLinvel(this.handle));
+        const vector = VectorOps.fromRaw(this.rawSet.rbLinvel(this.handle));
+        return {...vector, y: -vector.y};
     }
 
     // #if DIM3
@@ -463,7 +466,8 @@ export class RigidBody {
      * The angular velocity of this rigid-body.
      */
     public angvel(): Vector {
-        return VectorOps.fromRaw(this.rawSet.rbAngvel(this.handle));
+        const vector = VectorOps.fromRaw(this.rawSet.rbAngvel(this.handle));
+        return {...vector, y: -vector.y};
     }
 
     // #endif
@@ -704,7 +708,7 @@ export class RigidBody {
         principalAngularInertia: number,
         wakeUp: boolean,
     ) {
-        let rawCom = VectorOps.intoRaw(centerOfMass);
+        let rawCom = VectorOps.intoRaw({...centerOfMass, y: -centerOfMass.y});
         this.rawSet.rbSetAdditionalMassProperties(
             this.handle,
             mass,
@@ -750,7 +754,7 @@ export class RigidBody {
      * @param wakeUp - should the rigid-body be automatically woken-up?
      */
     public addForce(force: Vector, wakeUp: boolean) {
-        const rawForce = VectorOps.intoRaw(force);
+        const rawForce = VectorOps.intoRaw({...force, y: -force.y});
         this.rawSet.rbAddForce(this.handle, rawForce, wakeUp);
         rawForce.free();
     }
@@ -762,7 +766,7 @@ export class RigidBody {
      * @param wakeUp - should the rigid-body be automatically woken-up?
      */
     public applyImpulse(impulse: Vector, wakeUp: boolean) {
-        const rawImpulse = VectorOps.intoRaw(impulse);
+        const rawImpulse = VectorOps.intoRaw({...impulse, y: -impulse.y});
         this.rawSet.rbApplyImpulse(this.handle, rawImpulse, wakeUp);
         rawImpulse.free();
     }
@@ -788,7 +792,7 @@ export class RigidBody {
      * @param wakeUp - should the rigid-body be automatically woken-up?
      */
     public addTorque(torque: Vector, wakeUp: boolean) {
-        const rawTorque = VectorOps.intoRaw(torque);
+        const rawTorque = VectorOps.intoRaw({...torque, y: -torque.y});
         this.rawSet.rbAddTorque(this.handle, rawTorque, wakeUp);
         rawTorque.free();
     }
@@ -816,7 +820,7 @@ export class RigidBody {
      * @param wakeUp - should the rigid-body be automatically woken-up?
      */
     public applyTorqueImpulse(torqueImpulse: Vector, wakeUp: boolean) {
-        const rawTorqueImpulse = VectorOps.intoRaw(torqueImpulse);
+        const rawTorqueImpulse = VectorOps.intoRaw({...torqueImpulse, y: -torqueImpulse.y});
         this.rawSet.rbApplyTorqueImpulse(this.handle, rawTorqueImpulse, wakeUp);
         rawTorqueImpulse.free();
     }
@@ -831,8 +835,8 @@ export class RigidBody {
      * @param wakeUp - should the rigid-body be automatically woken-up?
      */
     public addForceAtPoint(force: Vector, point: Vector, wakeUp: boolean) {
-        const rawForce = VectorOps.intoRaw(force);
-        const rawPoint = VectorOps.intoRaw(point);
+        const rawForce = VectorOps.intoRaw({...force, y: -force.y});
+        const rawPoint = VectorOps.intoRaw({...point, y: -point.y});
         this.rawSet.rbAddForceAtPoint(this.handle, rawForce, rawPoint, wakeUp);
         rawForce.free();
         rawPoint.free();
@@ -850,8 +854,8 @@ export class RigidBody {
         point: Vector,
         wakeUp: boolean,
     ) {
-        const rawImpulse = VectorOps.intoRaw(impulse);
-        const rawPoint = VectorOps.intoRaw(point);
+        const rawImpulse = VectorOps.intoRaw({...impulse, y: -impulse.y});
+        const rawPoint = VectorOps.intoRaw({...point, y: -point.y});
         this.rawSet.rbApplyImpulseAtPoint(
             this.handle,
             rawImpulse,
@@ -864,15 +868,15 @@ export class RigidBody {
 }
 
 export class RigidBodyDesc {
-    translation: Vector;
+    private translation: Vector;
     rotation: Rotation;
     gravityScale: number;
     mass: number;
     massOnly: boolean;
-    centerOfMass: Vector;
+    private centerOfMass: Vector;
     translationsEnabledX: boolean;
     translationsEnabledY: boolean;
-    linvel: Vector;
+    private linvel: Vector;
     // #if DIM2
     angvel: number;
     principalAngularInertia: number;
@@ -927,6 +931,18 @@ export class RigidBodyDesc {
         this.sleeping = false;
         this.ccdEnabled = false;
         this.dominanceGroup = 0;
+    }
+
+    public getTranslation(){
+        return {...this.translation, y: -this.translation.y};
+    }
+
+    public getCenterOfMass(){
+        return {...this.centerOfMass, y: -this.centerOfMass.y};
+    }
+
+    public getLinVel(){
+        return {...this.linvel, y: -this.linvel.y};
     }
 
     /**
@@ -1006,7 +1022,7 @@ export class RigidBodyDesc {
         if (typeof x != "number" || typeof y != "number")
             throw TypeError("The translation components must be numbers.");
 
-        this.translation = {x: x, y: y};
+        this.translation = {x: x, y: -y};
         return this;
     }
 
@@ -1117,7 +1133,7 @@ export class RigidBodyDesc {
         principalAngularInertia: number,
     ): RigidBodyDesc {
         this.mass = mass;
-        VectorOps.copy(this.centerOfMass, centerOfMass);
+        VectorOps.copy(this.centerOfMass, {...centerOfMass, y: -centerOfMass.y});
         this.principalAngularInertia = principalAngularInertia;
         this.massOnly = false;
         return this;
@@ -1198,7 +1214,7 @@ export class RigidBodyDesc {
      * @param vel - The angular velocity to set.
      */
     public setAngvel(vel: Vector): RigidBodyDesc {
-        VectorOps.copy(this.angvel, vel);
+        VectorOps.copy(this.angvel, {...vel, y: -vel.y});
         return this;
     }
 
@@ -1228,8 +1244,8 @@ export class RigidBodyDesc {
         angularInertiaLocalFrame: Rotation,
     ): RigidBodyDesc {
         this.mass = mass;
-        VectorOps.copy(this.centerOfMass, centerOfMass);
-        VectorOps.copy(this.principalAngularInertia, principalAngularInertia);
+        VectorOps.copy(this.centerOfMass, {...centerOfMass, y: -centerOfMass.y});
+        VectorOps.copy(this.principalAngularInertia, {...principalAngularInertia, y: -principalAngularInertia.y});
         RotationOps.copy(
             this.angularInertiaLocalFrame,
             angularInertiaLocalFrame,

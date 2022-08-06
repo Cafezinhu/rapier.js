@@ -214,6 +214,10 @@ export abstract class Shape {
         shapeVel2: Vector,
         maxToi: number,
     ): ShapeTOI | null {
+        shapePos1.y *= -1;
+        shapeVel1.y *= -1;
+        shapePos2.y *= -1;
+        shapeVel2.y *= -1;
         let rawPos1 = VectorOps.intoRaw(shapePos1);
         let rawRot1 = RotationOps.intoRaw(shapeRot1);
         let rawVel1 = VectorOps.intoRaw(shapeVel1);
@@ -247,6 +251,11 @@ export abstract class Shape {
 
         rawShape1.free();
         rawShape2.free();
+        
+        result.normal1.y *= -1;
+        result.normal2.y *= -1;
+        result.witness1.y *= -1;
+        result.witness2.y *= -1;
 
         return result;
     }
@@ -268,6 +277,8 @@ export abstract class Shape {
         shapePos2: Vector,
         shapeRot2: Rotation,
     ): boolean {
+        shapePos1.y *= -1;
+        shapePos2.y *= -1;
         let rawPos1 = VectorOps.intoRaw(shapePos1);
         let rawRot1 = RotationOps.intoRaw(shapeRot1);
         let rawPos2 = VectorOps.intoRaw(shapePos2);
@@ -314,6 +325,8 @@ export abstract class Shape {
         shapeRot2: Rotation,
         prediction: number,
     ): ShapeContact | null {
+        shapePos1.y *= -1;
+        shapePos2.y *= -1;
         let rawPos1 = VectorOps.intoRaw(shapePos1);
         let rawRot1 = RotationOps.intoRaw(shapeRot1);
         let rawPos2 = VectorOps.intoRaw(shapePos2);
@@ -341,6 +354,11 @@ export abstract class Shape {
         rawShape1.free();
         rawShape2.free();
 
+        result.normal1.y *= -1;
+        result.normal2.y *= -1;
+        result.point1.y *= -1;
+        result.point2.y *= -1;
+
         return result;
     }
 
@@ -349,6 +367,8 @@ export abstract class Shape {
         shapeRot: Rotation,
         point: Vector,
     ): boolean {
+        shapePos.y *= -1;
+        point.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawPoint = VectorOps.intoRaw(point);
@@ -370,6 +390,8 @@ export abstract class Shape {
         point: Vector,
         solid: boolean,
     ): PointProjection {
+        shapePos.y *= -1;
+        point.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawPoint = VectorOps.intoRaw(point);
@@ -384,6 +406,8 @@ export abstract class Shape {
         rawPoint.free();
         rawShape.free();
 
+        result.point.y *= -1;
+
         return result;
     }
 
@@ -393,6 +417,7 @@ export abstract class Shape {
         shapeRot: Rotation,
         maxToi: number,
     ): boolean {
+        shapePos.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawRayOrig = VectorOps.intoRaw(ray.origin);
@@ -423,6 +448,7 @@ export abstract class Shape {
         maxToi: number,
         solid: boolean,
     ): number {
+        shapePos.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawRayOrig = VectorOps.intoRaw(ray.origin);
@@ -454,6 +480,7 @@ export abstract class Shape {
         maxToi: number,
         solid: boolean,
     ): RayIntersection {
+        shapePos.y *= -1;
         let rawPos = VectorOps.intoRaw(shapePos);
         let rawRot = RotationOps.intoRaw(shapeRot);
         let rawRayOrig = VectorOps.intoRaw(ray.origin);
@@ -476,7 +503,8 @@ export abstract class Shape {
         rawRayOrig.free();
         rawRayDir.free();
         rawShape.free();
-
+        
+        result.normal.y *= -1;
         return result;
     }
 }
@@ -775,9 +803,9 @@ export class Triangle extends Shape {
      */
     constructor(a: Vector, b: Vector, c: Vector) {
         super();
-        this.a = a;
-        this.b = b;
-        this.c = c;
+        this.a = {...a, y: -a.y};
+        this.b = {...b, y: -b.y};
+        this.c = {...c, y: -c.y};
     }
 
     public intoRaw(): RawShape {
@@ -830,9 +858,9 @@ export class RoundTriangle extends Shape {
      */
     constructor(a: Vector, b: Vector, c: Vector, borderRadius: number) {
         super();
-        this.a = a;
-        this.b = b;
-        this.c = c;
+        this.a = {...a, y: -a.y};
+        this.b = {...b, y: -b.y};
+        this.c = {...c, y: -c.y};
         this.borderRadius = borderRadius;
     }
 
