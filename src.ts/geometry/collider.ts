@@ -1019,7 +1019,7 @@ export class ColliderDesc {
     shape: Shape;
     massPropsMode: MassPropsMode;
     mass: number;
-    private centerOfMass: Vector;
+    centerOfMass: Vector;
     // #if DIM2
     principalAngularInertia: number;
     rotationsEnabled: boolean;
@@ -1032,7 +1032,7 @@ export class ColliderDesc {
     friction: number;
     restitution: number;
     rotation: Rotation;
-    private translation: Vector;
+    translation: Vector;
     isSensor: boolean;
     collisionGroups: InteractionGroups;
     solverGroups: InteractionGroups;
@@ -1453,7 +1453,7 @@ export class ColliderDesc {
     }
 
     public setCenterOfMass(x: number, y: number){
-        this.centerOfMass = {x, y: -y, z: 0};
+        this.centerOfMass = {...this.centerOfMass, x, y: -y};
     }
 
     public getCenterOfMass(){
@@ -1483,7 +1483,7 @@ export class ColliderDesc {
      *
      * @param rot - The rotation of the collider to be created relative to the rigid-body it is attached to.
      */
-    public setRotation(rot: Rotation): ColliderDesc {
+    setRotation(rot: Rotation): ColliderDesc {
         // #if DIM2
         this.rotation = rot;
         // #endif

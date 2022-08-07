@@ -129,7 +129,7 @@ export class World {
         rawSerializationPipeline?: RawSerializationPipeline,
         rawDebugRenderPipeline?: RawDebugRenderPipeline,
     ) {
-        this.gravity = {x: gravity.x, y: -gravity.y, z: gravity.z};
+        this.gravity = {...gravity, y: -gravity.y};
         this.integrationParameters = new IntegrationParameters(
             rawIntegrationParameters,
         );

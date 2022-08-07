@@ -868,15 +868,15 @@ export class RigidBody {
 }
 
 export class RigidBodyDesc {
-    private translation: Vector;
+    translation: Vector;
     rotation: Rotation;
     gravityScale: number;
     mass: number;
     massOnly: boolean;
-    private centerOfMass: Vector;
+    centerOfMass: Vector;
     translationsEnabledX: boolean;
     translationsEnabledY: boolean;
-    private linvel: Vector;
+    linvel: Vector;
     // #if DIM2
     angvel: number;
     principalAngularInertia: number;
